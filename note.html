@@ -21,43 +21,43 @@
 	 <p id="test">123</p>
     <script>
 
-	    var notes=[];
+	var notes=[];
 		//    -----------------------------------------------		
-		function search(){
-		   document.getElementById('list').innerHTML='';		//clean all the data in list   
-		   var text=document.getElementById('searchname').value.trim();
-		   for(var index=0;index<notes.length;index++){
-		      if(text=='')createNote(notes[index]);
-			  else {
-			      var reg=new RegExp(text,'i');
+	function search(){
+           document.getElementById('list').innerHTML='';		//clean all the data in list   
+	   var text=document.getElementById('searchname').value.trim();
+	   for(var index=0;index<notes.length;index++){
+		if(text=='')createNote(notes[index]);
+	        else {
+	              var reg=new RegExp(text,'i');
 	              if(reg.test(notes[index]))createNote(notes[index]);
-			  }
-		   }		   
-		}
-		
-        function addItem(){
-		  var addName=document.getElementById('addname').value;
-		  if(addName=='')return;
-		  notes.push(addName);
-          createNote(addName);
+	             }
+	   }		   
         }
 		
-		function createNote(note){
+        function addItem(){
+	   var addName=document.getElementById('addname').value;
+           if(addName=='')return;
+           notes.push(addName);
+           createNote(addName);
+        }
+		
+	function createNote(note){
 		  
-		  var newList=document.createElement('li');
+          var newList=document.createElement('li');
           var newContent=document.createTextNode(note);
           newList.appendChild(newContent);
   
           var newButton=document.createElement('button');
           var buttonName=document.createTextNode('Remove');
-		  newButton.appendChild(buttonName);	  
+	  newButton.appendChild(buttonName);	  
           newButton.onclick=function(){ 
             document.getElementById('list').removeChild(newList);
           };
 		  
           newList.appendChild(newButton);
-		  document.getElementById('list').appendChild(newList);
-		}
+	  document.getElementById('list').appendChild(newList);
+	}
 
     </script>
 
