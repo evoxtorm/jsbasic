@@ -1,20 +1,27 @@
-function Notes(){
-	
-    this.notes=[];
-    this.createNote = function(note){
+'use strict';
 
-        var newList=document.createElement('li');
-        var newContent=document.createTextNode(note);
-        newList.appendChild(newContent);
-  
-        var newButton=document.createElement('button');
-        var buttonName=document.createTextNode('Remove');
-		newButton.appendChild(buttonName);	  
-        newButton.onclick=function(){ 
-          //how to remove the newList
-          newList.parentNode.removeChild(newList);
-        };
-        newList.appendChild(newButton);
-        return newList;
+class Notes {
+
+    constructor () {
+        this.notes = [];
     }
+
+    addNote (note) {
+        this.notes.push(note);
+        console.log(this.notes.length);
+    }
+
+    getNoteByIndex (index) {
+        if(index > this.notes.length)
+            return;
+        return this.notes[index];
+    }
+
+    getLength () {
+        return this.notes.length;
+    }
+
+    deleteNote () {}
+    
+       
 }
