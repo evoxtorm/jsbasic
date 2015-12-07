@@ -12,7 +12,11 @@ class Notes {
     }
 
     getNoteByIndex (index) {
+<<<<<<< HEAD
         if(index >= this.notes.length || index < 0)
+=======
+        if(index >= this.notes.length)
+>>>>>>> f0c8b13e3e325b01f962c92cd8e2fd89af1f1212
             return;
         return this.notes[index];
     }
