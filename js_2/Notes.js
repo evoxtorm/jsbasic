@@ -8,11 +8,11 @@ class Notes {
 
     addNote (note) {
         this.notes.push(note);
-        console.log(this.notes.length);
+        //console.log(this.notes.length);
     }
 
     getNoteByIndex (index) {
-        if(index > this.notes.length)
+        if(index >= this.notes.length)
             return;
         return this.notes[index];
     }
