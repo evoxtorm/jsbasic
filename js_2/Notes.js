@@ -8,15 +8,11 @@ class Notes {
 
     addNote (note) {
         this.notes.push(note);
-        //console.log(this.notes.length);
+        console.log(this.notes);
     }
 
     getNoteByIndex (index) {
-<<<<<<< HEAD
         if(index >= this.notes.length || index < 0)
-=======
-        if(index >= this.notes.length)
->>>>>>> f0c8b13e3e325b01f962c92cd8e2fd89af1f1212
             return;
         return this.notes[index];
     }
@@ -25,10 +21,13 @@ class Notes {
         return this.notes.length;
     }
 
-    deleteNotebyIndex (index) {
-    	if(index >= this.notes.length || index < 0)
-            return;
-        this.notes.splice(index,1);
+    deleteNote (note) {
+        var index = this.notes.findIndex(function (element){
+            return note === element;
+        });
+        if(index !== -1)
+            this.notes.splice(index,1);
+              
     }
     
        
