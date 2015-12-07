@@ -8,11 +8,11 @@ class Notes {
 
     addNote (note) {
         this.notes.push(note);
-        console.log(this.notes.length);
+        //console.log(this.notes.length);
     }
 
     getNoteByIndex (index) {
-        if(index > this.notes.length)
+        if(index >= this.notes.length || index < 0)
             return;
         return this.notes[index];
     }
@@ -21,7 +21,11 @@ class Notes {
         return this.notes.length;
     }
 
-    deleteNote () {}
+    deleteNotebyIndex (index) {
+    	if(index >= this.notes.length || index < 0)
+            return;
+        this.notes.splice(index,1);
+    }
     
        
 }

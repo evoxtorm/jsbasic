@@ -12,17 +12,18 @@ function add () {
 function search () {
     document.getElementById('list').innerHTML = '';		//clean all the data in list 
 	var newText = document.getElementById('searchname').value.trim();	
-	
-	for(var index = 0; index < notes.getLength(); index++){
-		var note = notes.getNoteByIndex(index);
-		console.log(notes.getNoteByIndex(index));
-		if(newText === '')
-			addItem(note);
-		else{
-			var reg = new RegExp(newText,'i');
-			if(reg.test(note))
-				addItem(note);
-		}			 
+
+	if(newText === ''){
+		notes.notes.forEach(function (element) {
+			addItem(element);
+		})
+	}
+	else {
+		var reg = new RegExp(newText,'i');
+		notes.notes.forEach(function (element) {
+			if(reg.test(element))
+				addItem(element);
+		})
 	}		   
 }
 
