@@ -2,26 +2,20 @@ function Notes () {
     this.notes = [];
 }
 
+Notes.prototype.getNotes = function () {
+    return this.notes;
+}
 Notes.prototype.addNote = function (note) {
     this.notes.push(note);
 }
 
-Notes.prototype.getNoteByIndex = function (index) {
-    if(index >= this.notes.length || index < 0)
-            return;
-    return this.notes[index];
-}
-
-Notes.prototype.getLength = function () {
-    return this.notes.length;
-}
-
 Notes.prototype.deleteNote = function (note) {
     var index = this.notes.findIndex(function (element){
-            return note === element;
+            return note.id === element.id;
     });
     if(index !== -1)
         this.notes.splice(index,1);
+    console.log(this.notes.length);
 }
 
 

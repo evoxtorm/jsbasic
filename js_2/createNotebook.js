@@ -1,12 +1,17 @@
 var notes = new Notes();
-
+var id_ = 0;
 
 function add () {
     var newText = document.getElementById('addname').value.trim();
     if(newText === '')
         return;
-    notes.addNote(newText);
-    addItem(newText);
+    var note = {
+        id:id_++,
+        content:newText
+    };
+    console.log(id_);
+    notes.addNote(note);
+    addItem(note);
 }
 
 function search () {
@@ -14,15 +19,15 @@ function search () {
     var newText = document.getElementById('searchname').value.trim();	
 
     if(newText === ''){
-        notes.notes.forEach(function (element) {
-            addItem(element);
+        notes.getNotes().forEach(function (note) {
+            addItem(note);
         })
     }
     else {
         var reg = new RegExp(newText,'i');
-        notes.notes.forEach(function (element) {
-            if(reg.test(element))
-            addItem(element);
+        notes.getNotes().forEach(function (note) {
+            if(reg.test(note.content))
+            addItem(note);
         })
     }
 }
@@ -33,7 +38,7 @@ function addItem (note) {
 
 function createNote (note) {
     var newList = document.createElement('li');
-    var newContent = document.createTextNode(note);
+    var newContent = document.createTextNode(note.content);
     newList.appendChild(newContent);
   
     var newButton = document.createElement('button');
