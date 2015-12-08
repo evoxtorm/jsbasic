@@ -1,5 +1,6 @@
 var notes = new Notes();
 
+
 function add () {
     var newText = document.getElementById('addname').value.trim();
     if(newText === '')
