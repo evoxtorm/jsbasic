@@ -2,46 +2,33 @@ function Notes() {
     this.notes = [];
 }
 
-Notes.prototype.getNotes = function() {
-    return this.notes;
-}
-
-Notes.prototype.addNote = function(note) {    
-    this.notes.push(note);
-}
-
-Notes.prototype.deleteNote = function(note) {
-    var index = this.notes.findIndex(function (element){
-            return note.id === element.id;
-    });
-    if(index !== -1)
-        this.notes.splice(index,1);
-    console.log(this.notes.length);
-}
-
-//  the following functions are callback functions
-Notes.prototype.getNotesCB = function(cb) {
+Notes.prototype.gettingNotes = function(cb) {
     setTimeout(function() {
-        cb();
-    },1000);
+        cb(this.notes);
+    }.bind(this),1000);
 
 }
 
-Notes.prototype.addNoteCB = function(note,cb) {
+Notes.prototype.addNote = function(note,cb) {
     console.log("start to add");
     setTimeout(function() {
-        cb(note);
+        this.notes.push(note);
+        cb();
         console.log("added!");
-    },1000);
+    }.bind(this),1000);
 }
 
-Notes.prototype.deleteNoteCB = function(note,cb) {
+Notes.prototype.deleteNote = function(note,cb) {
     console.log("start to delete");
     setTimeout(function() {
-        cb(note);
+        var index = this.notes.findIndex(function (element){
+            return note.id === element.id;
+        });
+        if(index !== -1)
+            this.notes.splice(index,1);
+        cb();
         console.log("deleted!");
-    },1000);
-
+    }.bind(this),1000);
 }
 
 

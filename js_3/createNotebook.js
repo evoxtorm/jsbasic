@@ -9,9 +9,8 @@ function add() {
         id:id_++,
         content:newText
     };
-    notes.addNoteCB(note,function(){
-        notes.addNote(note);
-
+    notes.addNote(note,function(){
+        console.log('new note has been added');
     });
     addItem(note);
 }
@@ -20,9 +19,7 @@ function search() {
     document.getElementById('list').innerHTML = '';		//clean all the data in list 
     var newText = document.getElementById('searchname').value.trim();
     
-    notes.getNotesCB(function() {
-        var array = notes.getNotes();
-        console.log(array.length);
+    notes.gettingNotes(function(array) {
         if(newText === ''){
             array.forEach(function (note) {
                 addItem(note);
@@ -52,8 +49,8 @@ function createNote (note) {
     newButton.appendChild(buttonName);
     newButton.onclick = function () {
         newList.parentNode.removeChild(newList);
-        notes.deleteNoteCB(note, function(){
-            notes.deleteNote(note);
+        notes.deleteNote(note, function(){
+            console.log('Note has been deleted');
         });
     };
     newList.appendChild(newButton);
