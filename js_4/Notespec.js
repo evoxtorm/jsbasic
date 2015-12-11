@@ -30,7 +30,7 @@ Notes.prototype.deleteNote = function(note,cb) {
         console.log("deleted!");
     }.bind(this),1000);
 }
-
+module.exports = Notes;
 
 /*
 'use strict';
