@@ -1,7 +1,7 @@
 
 
 var net = require('net');
-
+var color = require('colors');
 var chatServer = net.createServer();
 
 var clients = [];
@@ -10,17 +10,26 @@ chatServer.on('connection', (client) => {
 	client.setEncoding('utf-8');
 	client.name = client.remotePort;
 	clients.push(client);
-
-	console.log(client.name+' just join in the chat room!\n');
+	var joinMsg = client.name+' just join in the chat room!';
+	console.log(joinMsg.red);
 	client.write('You have joined in the chat room, you name is '+client.name);
 	
-	client.on('data', (data) => {
-        console.log(client.name+' said: ' + data);
+	client.on('data',(data) => {
+		var chatMsg = client.name+' said: ' + data;
+        console.log(chatMsg.yellow);
         broadcast(data,client);
     });
 
     client.on('end',() => {
-    	remove(client);
+    	;
+    	var msg = client.name+' has left the chat room.';
+    	broadcast(msg);
+    });
+
+    client.on('error',() => {
+    	var leftMsg = client.name+' just left the chat room.';
+    	console.log(leftMsg.blue);
+    	remove(client)
     	var msg = client.name+' has left the chat room.';
     	broadcast(msg);
     });
