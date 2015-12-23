@@ -1,56 +1,112 @@
-
-
 var net = require('net');
+var colors = require('colors');
 var chatServer = net.createServer();
 var clients = [];
 
 chatServer.on('connection', (client) => {
-    client.setEncoding('utf-8');
-    client.name = client.remotePort;
-    clients.push(client);
-    var curTime = getTime();
-    var joinMsg = curTime + ' ' + client.name + ' just join in the chat room!';
-    console.log(joinMsg);
-    client.write(curTime + ' You have joined in the chat room, you name is ' + client.name);
-
-    client.on('data',(data) => {
-        data = data.slice(0,-2).toLowerCase();// remove the \n at the end of the data
-        var curTime = getTime();
-        var changeNameTag = data.slice(0,6);
-
-        if(data === '/list'){
-            var clientsName = '';
-            clients.forEach(function(element) {
-                clientsName += ' ' + element.name;
-            });
-            client.write(clientsName);
-        }
-        else if(data === '/ping') {
-            client.write('PONG');
-        }
-        else if(changeNameTag === '/name ') {
-            client.name = data.slice(6);    
-        }
-        else if(data === '/quit') {
-            client.end();
-        }
-        else{
-            var chatMsg = curTime + ' ' + client.name + ' : ' + data;
-            console.log(chatMsg);
-            broadcast(chatMsg);
-        }    
+    newClientInit(client);
+    showMessageInServer(client);
+    
+    client.on('data',(data) => {       
+        if(isCommand(data))
+            processCommand(processData(data),client);     
+        else 
+            showMessageInClients(client,data); 
     });
 
     client.on('error',() => {
-        console.log('in error');
         clientLeft(client);
     });
 
     client.on('end', () => {
-        console.log('in end');
         clientLeft(client);
     });
 });
+
+var commandMap = {
+    list : onList,
+    ping : onPing,
+    name : onChangeName,
+    quit : onQuit,
+    color : onColor
+}
+
+var colorMap = {
+    red : onRed,
+    yellow : onYellow,
+    grey : onGrey
+}
+
+function newClientInit(client) {
+    client.setEncoding('utf-8');
+    client.name = client.remotePort;
+    client.color = 'grey';
+    clients.push(client);
+}
+
+function onPing(command,client) {
+    client.write('PONG');
+}
+
+function onList(command,client) {
+    var clientsName = '';
+    clients.forEach(function(element) {
+        clientsName += ' ' + element.name;
+    });
+    client.write(clientsName);
+}
+
+function onChangeName(command,client) {
+    client.name = command.content[0];
+}
+
+function onQuit(command,client) {
+    client.end();
+}
+
+function onColor(command,client) {
+    var userInputColor = command.content[0];
+    var colorMatch = colorMap[userInputColor];
+    if(colorMatch)
+        client.color = userInputColor;
+    else 
+        client.write('no such color,only support red,yellow and grey');
+}
+
+function processCommand(command,client) {
+    var commandMatch = commandMap[command.tag];
+    if(commandMatch)
+        commandMatch(command,client);
+    else 
+        client.write('no such command');
+}
+
+function showMessageInServer(client) {
+    var curTime = getTime();
+    var joinMsg = curTime + ' ' + client.name + ' just join in the chat room!';
+    console.log(joinMsg);
+    client.write(curTime + ' You have joined in the chat room, you name is ' + client.name);
+}
+
+function showMessageInClients(client,data) {
+    var curTime = getTime();
+    var chatMsg = curTime + ' ' + client.name + ' : ' + data;
+    console.log(chatMsg);
+    broadcast(chatMsg,client);
+}
+
+function processData(data) {
+    var commands = data.substring(1).trim().toLowerCase().split(' ');
+    var commandTag = commands.shift()
+    return {
+        tag:commandTag,
+        content:commands
+    };
+}
+
+function isCommand(input) {
+    return input.substring(0,1) === '/';
+}
 
 function clientLeft(client) {
     var curTime = getTime();
@@ -60,9 +116,26 @@ function clientLeft(client) {
     broadcast(leftMessage);
 }
 
-function broadcast(message) {
+function broadcast(message,client) {
+    var colorMatch = colorMap[client.color];
+    colorMatch(message);
+}
+
+function onRed(message) {
     clients.forEach(function(element) {
-        element.write(message);
+        element.write(colors.red(message));
+    });
+}
+
+function onGrey(message) {
+    clients.forEach(function(element) {
+        element.write(colors.grey(message));
+    });
+}
+
+function onYellow(message) {
+    clients.forEach(function(element) {
+        element.write(colors.yellow(message));
     });
 }
 
