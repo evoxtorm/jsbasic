@@ -4,8 +4,9 @@ var chatServer = net.createServer();
 var clients = [];
 
 chatServer.on('connection', (client) => {
-    newClientInit(client);
+    initialNewClient(client);
     showMessageInServer(client);
+    console.log(colors['red']('what'));
     
     client.on('data',(data) => {       
         if(isCommand(data))
@@ -15,11 +16,11 @@ chatServer.on('connection', (client) => {
     });
 
     client.on('error',() => {
-        clientLeft(client);
+        onLeft(client);
     });
 
     client.on('end', () => {
-        clientLeft(client);
+        onLeft(client);
     });
 });
 
@@ -31,13 +32,7 @@ var commandMap = {
     color : onColor
 }
 
-var colorMap = {
-    red : onRed,
-    yellow : onYellow,
-    grey : onGrey
-}
-
-function newClientInit(client) {
+function initialNewClient(client) {
     client.setEncoding('utf-8');
     client.name = client.remotePort;
     client.color = 'grey';
@@ -66,11 +61,12 @@ function onQuit(command,client) {
 
 function onColor(command,client) {
     var userInputColor = command.content[0];
-    var colorMatch = colorMap[userInputColor];
-    if(colorMatch)
+    if(colors[userInputColor] === undefined) {
+        client.write('no such color');
+    }
+    else {
         client.color = userInputColor;
-    else 
-        client.write('no such color,only support red,yellow and grey');
+    }   
 }
 
 function processCommand(command,client) {
@@ -92,7 +88,7 @@ function showMessageInClients(client,data) {
     var curTime = getTime();
     var chatMsg = curTime + ' ' + client.name + ' : ' + data;
     console.log(chatMsg);
-    broadcast(chatMsg,client);
+    broadcast(chatMsg,client.color);
 }
 
 function processData(data) {
@@ -108,7 +104,7 @@ function isCommand(input) {
     return input.substring(0,1) === '/';
 }
 
-function clientLeft(client) {
+function onLeft(client) {
     var curTime = getTime();
     var leftMessage = curTime + ' ' + client.name + ' just left the chat room.';
     console.log(leftMessage);
@@ -116,26 +112,9 @@ function clientLeft(client) {
     broadcast(leftMessage);
 }
 
-function broadcast(message,client) {
-    var colorMatch = colorMap[client.color];
-    colorMatch(message);
-}
-
-function onRed(message) {
+function broadcast(message,color) {
     clients.forEach(function(element) {
-        element.write(colors.red(message));
-    });
-}
-
-function onGrey(message) {
-    clients.forEach(function(element) {
-        element.write(colors.grey(message));
-    });
-}
-
-function onYellow(message) {
-    clients.forEach(function(element) {
-        element.write(colors.yellow(message));
+        element.write(colors[color](message));
     });
 }
 
