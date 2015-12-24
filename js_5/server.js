@@ -8,14 +8,16 @@ chatServer.on('connection', (client) => {
     showMessageInServer(client);
     console.log(colors['red']('what'));
     
-    client.on('data',(data) => {       
-        if(isCommand(data))
-            processCommand(processData(data),client);     
-        else 
-            showMessageInClients(client,data); 
+    client.on('data', (data) => {       
+        if(isCommand(data)) {
+            processCommand(processData(data), client);     
+        }
+        else {
+            showMessageInClients(client, data); 
+        }
     });
 
-    client.on('error',() => {
+    client.on('error', () => {
         onLeft(client);
     });
 
@@ -39,11 +41,11 @@ function initialNewClient(client) {
     clients.push(client);
 }
 
-function onPing(command,client) {
+function onPing(command, client) {
     client.write('PONG');
 }
 
-function onList(command,client) {
+function onList(command, client) {
     var clientsName = '';
     clients.forEach(function(element) {
         clientsName += ' ' + element.name;
@@ -51,15 +53,15 @@ function onList(command,client) {
     client.write(clientsName);
 }
 
-function onChangeName(command,client) {
+function onChangeName(command, client) {
     client.name = command.content[0];
 }
 
-function onQuit(command,client) {
+function onQuit(command, client) {
     client.end();
 }
 
-function onColor(command,client) {
+function onColor(command, client) {
     var userInputColor = command.content[0];
     if(colors[userInputColor] === undefined) {
         client.write('no such color');
@@ -69,12 +71,14 @@ function onColor(command,client) {
     }   
 }
 
-function processCommand(command,client) {
+function processCommand(command, client) {
     var commandMatch = commandMap[command.tag];
-    if(commandMatch)
-        commandMatch(command,client);
-    else 
+    if(commandMatch) {
+        commandMatch(command, client);
+    }
+    else {
         client.write('no such command');
+    }
 }
 
 function showMessageInServer(client) {
@@ -84,11 +88,11 @@ function showMessageInServer(client) {
     client.write(curTime + ' You have joined in the chat room, you name is ' + client.name);
 }
 
-function showMessageInClients(client,data) {
+function showMessageInClients(client, data) {
     var curTime = getTime();
     var chatMsg = curTime + ' ' + client.name + ' : ' + data;
     console.log(chatMsg);
-    broadcast(chatMsg,client.color);
+    broadcast(chatMsg, client.color);
 }
 
 function processData(data) {
@@ -101,7 +105,7 @@ function processData(data) {
 }
 
 function isCommand(input) {
-    return input.substring(0,1) === '/';
+    return input.substring(0, 1) === '/';
 }
 
 function onLeft(client) {
@@ -112,14 +116,14 @@ function onLeft(client) {
     broadcast(leftMessage);
 }
 
-function broadcast(message,color) {
+function broadcast(message, color) {
     clients.forEach(function(element) {
         element.write(colors[color](message));
     });
 }
 
 function remove(client) {
-    clients.splice(clients.indexOf(client),1);
+    clients.splice(clients.indexOf(client), 1);
 }
 
 function getTime() {
@@ -127,10 +131,10 @@ function getTime() {
     var hour = time.getHours();
     var minute = time.getMinutes();
     var second = time.getSeconds();
-    var curTime = '['+hour+':'+minute+':'+second+']';
+    var curTime = '[' + hour + ':' + minute + ':' + second + ']';
     return curTime;
 }
 
-chatServer.listen(8080,() => {
+chatServer.listen(8080, () => {
     console.log('listen to 8080');
 });
