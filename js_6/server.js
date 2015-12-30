@@ -21,23 +21,23 @@ app.get('/', function(req, res) {
 });
 
 // read a list of notes
-app.get('/notes', function(req, res){ 
+app.get('/notes', function(req, res) { 
     notes.gettingNotes(function(allNotes) {
         res.json(allNotes);
     });   
 });
 
 // read a single note
-app.get('/notes/:id', function(req, res){
+app.get('/notes/:id', function(req, res) {
     notes.gettingNoteById(parseInt(req.params.id), function(index) {     
-        if(index !== -1){
+        if(index !== -1) {
             res.json(notes.notes[index]);
         }
     });   
 });
 
 // create a single note
-app.post('/notes', function(req, res){
+app.post('/notes', function(req, res) {
     var note = createNote(req);
     notes.addNote(note, function() {
         res.json(notes.notes);
@@ -45,7 +45,7 @@ app.post('/notes', function(req, res){
 });
 
 // update an existing note
-app.put('/notes/:id', function(req, res){
+app.put('/notes/:id', function(req, res) {
     var note = createNote(req);
     notes.updateNote(note, function() {
         res.json(notes.notes);  
@@ -53,7 +53,7 @@ app.put('/notes/:id', function(req, res){
 });
 
 // delete existing note
-app.delete('/notes/:id', function(req, res){
+app.delete('/notes/:id', function(req, res) {
     notes.deleteNoteById(parseInt(req.params.id), function() {
         res.json(notes.notes);
     });   
