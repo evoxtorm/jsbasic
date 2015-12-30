@@ -29,7 +29,7 @@ app.get('/notes', function(req, res){
 
 // read a single note
 app.get('/notes/:id', function(req, res){
-    notes.gettingNoteById(parseInt(req.params.id), function(index) {        
+    notes.gettingNoteById(parseInt(req.params.id), function(index) {     
         if(index !== -1){
             res.json(notes.notes[index]);
         }
@@ -38,17 +38,15 @@ app.get('/notes/:id', function(req, res){
 
 // create a single note
 app.post('/notes', function(req, res){
-    notes.addNote(req.body, function() {
+    var note = createNote(req);
+    notes.addNote(note, function() {
         res.json(notes.notes);
     });   
 });
 
 // update an existing note
 app.put('/notes/:id', function(req, res){
-    var note = {
-        id:parseInt(req.body.id),
-        content:req.body.content
-    };
+    var note = createNote(req);
     notes.updateNote(note, function() {
         res.json(notes.notes);  
     });  
@@ -64,12 +62,12 @@ app.delete('/notes/:id', function(req, res){
 app.listen(8080);
 console.log('8080 running');
 
-/*
-function createNote(context) {
+
+function createNote(req) {
     var note = {
-        id:id_++,
-        content: context
+        id:parseInt(req.body.id),
+        content:req.body.content
     };
     return note;
 }
-*/
+
