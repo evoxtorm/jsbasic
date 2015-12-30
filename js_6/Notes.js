@@ -8,9 +8,18 @@ Notes.prototype.gettingNotes = function(cb) {
     }.bind(this), 1000);
 }
 
+Notes.prototype.gettingNoteById = function(id, cb) {
+    setTimeout(function() {
+        var index = this.notes.findIndex(function(element) {
+            return id === element.id;
+        });
+        cb(index);
+    }.bind(this), 1000);
+}
+
 Notes.prototype.updateNote = function(note, cb) {
     setTimeout(function() {
-        var index = this.notes.findIndex(function (element){
+        var index = this.notes.findIndex(function(element) {
             return note.id === element.id;
         });
         if(index !== -1) {
@@ -29,7 +38,7 @@ Notes.prototype.addNote = function(note, cb) {
 
 Notes.prototype.deleteNoteById = function(id, cb) {
     setTimeout(function() {
-        var index = this.notes.findIndex(function (element){
+        var index = this.notes.findIndex(function(element) {
             return id === element.id;
         });
         if(index !== -1) {
