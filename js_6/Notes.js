@@ -13,7 +13,8 @@ Notes.prototype.gettingNoteById = function(id, cb) {
         var index = this.notes.findIndex(function(element) {
             return id === element.id;
         });
-        cb(index);
+        var note = index === -1 ? undefined : this.notes[index];
+        cb(note);
     }.bind(this), 1000);
 }
 
@@ -41,10 +42,11 @@ Notes.prototype.deleteNoteById = function(id, cb) {
         var index = this.notes.findIndex(function(element) {
             return id === element.id;
         });
+        var note = undefined;
         if(index !== -1) {
-            this.notes.splice(index, 1);
+            note = this.notes.splice(index, 1);
         }
-        cb();
+        cb(note);
     }.bind(this), 1000);
 }
 

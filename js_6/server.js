@@ -2,13 +2,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var Notes = require('./Notes');
 var notes = new Notes();
-/*
-var id_ = 0;
-var test1 = createNote('wow');
-var test2 = createNote('cs');
-notes.notes.push(test1);
-notes.notes.push(test2);
-*/
 
 var app = express();
 app.use(bodyParser.json());
@@ -29,9 +22,9 @@ app.get('/notes', function(req, res) {
 
 // read a single note
 app.get('/notes/:id', function(req, res) {
-    notes.gettingNoteById(parseInt(req.params.id), function(index) {     
-        if(index !== -1) {
-            res.json(notes.notes[index]);
+    notes.gettingNoteById(parseInt(req.params.id), function(note) {     
+        if(note !== undefined) {
+            res.json(note);
         }
     });   
 });
@@ -40,7 +33,7 @@ app.get('/notes/:id', function(req, res) {
 app.post('/notes', function(req, res) {
     var note = createNote(req);
     notes.addNote(note, function() {
-        res.json(notes.notes);
+        res.json(note);
     });   
 });
 
@@ -48,14 +41,16 @@ app.post('/notes', function(req, res) {
 app.put('/notes/:id', function(req, res) {
     var note = createNote(req);
     notes.updateNote(note, function() {
-        res.json(notes.notes);  
+        res.json(note);  
     });  
 });
 
 // delete existing note
 app.delete('/notes/:id', function(req, res) {
-    notes.deleteNoteById(parseInt(req.params.id), function() {
-        res.json(notes.notes);
+    notes.deleteNoteById(parseInt(req.params.id), function(note) {
+        if(note !== undefined) {
+            res.json(note);
+        }
     });   
 });
 
