@@ -2,6 +2,8 @@ function Notes() {
     this.notes = [];
 }
 
+var _id = 0;
+
 Notes.prototype.gettingNotes = function(cb) {
     setTimeout(function() {
         cb(this.notes);
@@ -30,10 +32,14 @@ Notes.prototype.updateNote = function(note, cb) {
     }.bind(this), 1000);
 }
 
-Notes.prototype.addNote = function(note, cb) {
+Notes.prototype.addNote = function(userInput, cb) {
     setTimeout(function() {
+        var note = {
+            id:_id++,
+            content: userInput
+        }
         this.notes.push(note);
-        cb();
+        cb(note);
     }.bind(this), 1000);
 }
 

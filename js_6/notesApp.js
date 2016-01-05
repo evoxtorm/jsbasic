@@ -8,38 +8,58 @@ $(document).ready(function() {
         }
     });
 
-    var Notes = Backbone.Collection.extend({
+    var NoteList = Backbone.Collection.extend({
         model: Note,
         url: '/notes'  
     });
 
-    var newNote = new Note({content: 'lol'});
-    console.log(newNote.get('content'));
+    var Notes = new NoteList;
+
+
+//template: _.template($('#note-template').html()),
+    var NoteView = Backbone.View.extend({
+        tagName: 'li',
+        events: {
+            'click .deleteButton': 'clearOneNote'
+        },
+        initialize: function() {
+            this.listenTo(this.model, 'destroy', this.remove);
+        },
+        clearOneNote: function() {
+            this.model.destroy();
+        }
+    });
+
+    var AddView = Backbone.View.extend({
+        el: '#add',
+        events: {
+        "click #addButton":  "addOneNote"
+        },
+        addOneNote: function() {
+            var userInput = $('#addname').val();
+            console.log(userInput);
+            Notes.create({content: userInput});
+        }
+
+    });
+
+    var NotesView = Backbone.View.extend({
+        el: '#list',
+
+        initialize: function() {
+            this.listenTo(Notes, 'add', this.render);
+        },
+
+        render: function() {
+            console.log('in render');
+        }
+    });
+
     
-    newNote.save({'id' : 1}, {
-        success: function() {
-            console.log('success in model save');
-        },
-        error: function() {
-            console.log('error in model save');
-        }
-    });
 
-    var newNotes = new Notes();
-
-    newNotes.fetch({
-        success: function() {
-            console.log('success in Collection fetch');
-        },
-        error: function() {
-            console.log('error in Collection fetch');
-        }
-    });
-
-    console.log('in notesAPP');
-
+    var av = new NoteView;
+    //var nv = new NotesView;
 });
-
 
 
 

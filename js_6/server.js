@@ -3,7 +3,11 @@ var bodyParser = require('body-parser');
 var Notes = require('./Notes');
 var notes = new Notes();
 
+
 var app = express();
+
+app.use(express.static(__dirname));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -31,8 +35,8 @@ app.get('/notes/:id', function(req, res) {
 
 // create a single note
 app.post('/notes', function(req, res) {
-    var note = createNote(req);
-    notes.addNote(note, function() {
+    //var note = createNote(req);
+    notes.addNote(req.body.content, function(note) {
         res.json(note);
     });   
 });
