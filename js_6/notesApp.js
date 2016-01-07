@@ -23,11 +23,9 @@ $(document).ready(function() {
             this.listenTo(this.model, 'destroy', this.remove);
         },
         clearOneNote: function() {
-            console.log('in clearOneNote');
             this.model.destroy();
         },
         render: function() {
-            console.log('note view render');
             this.$el.html(this.template(this.model.toJSON()));
             return this;
         }
@@ -41,17 +39,17 @@ $(document).ready(function() {
             'click #searchButton': 'search'
         },
         initialize: function() {
-            this.listenTo(Notes, 'add', this.addOneNote);
+            this.listenTo(Notes, 'add', this.showAllNotes);
             Notes.fetch({reset: true});
         },       
         creatNote: function() {
             var userInput = $('#addname').val().trim();
             if(userInput !== ''){
                 Notes.create({content: userInput});
-            }      
+            }
+            $('#addname').val('');     
         },
         addOneNote: function(note) {
-            console.log('in add one');
             var view = new NoteView({model: note});
             $('#list').append(view.render().el);
         },
@@ -62,24 +60,25 @@ $(document).ready(function() {
                 this.addAllNotes();
             }
             else {
-                console.log('in else');
                 var reg = new RegExp(userInput, 'i');
-                this.collection.models.forEach(function(note) {
-                    console.log(note.attributes.content);
+                this.collection.each(function(note) {
                     if(reg.test(note.attributes.content)){
-                        console.log('match');
-                        console.log(note.attributes);
                         this.addOneNote(note);
                     }
-                });               
+                }, this);               
             }
+            $('#searchname').val('');
         },
         addAllNotes: function() {
             Notes.each(this.addOneNote, this);
+        },
+        showAllNotes: function() {
+            $('#list').empty();
+            this.addAllNotes();
         }
     });
 
-    var nsv = new AppView({collection: Notes});
+    var appview = new AppView({collection: Notes});
 
 });
 
