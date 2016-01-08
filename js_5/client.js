@@ -4,7 +4,6 @@ var client = new net.Socket();
 client.setEncoding('utf8');
 process.stdin.setEncoding('utf8');
 
-
 client.connect(8080, () => {
     console.log('Connected!\n');
 });
