@@ -1,7 +1,7 @@
 $(document).ready(function() {
    
     var Note = Backbone.Model.extend({
-        default: {
+        defaults: {
             content: ''
         }
     });
@@ -11,18 +11,18 @@ $(document).ready(function() {
         url: '/notes'  
     });
 
-    var Notes = new NoteList;
+    var Notes = new NoteList();
 
     var NoteView = Backbone.View.extend({
         tagName: 'li',
         template: _.template($('#note-template').html()),
         events: {
-            'click .deleteButton': 'clearOneNote'
+            'click .delete-button': 'clearNote'
         },
         initialize: function() {
             this.listenTo(this.model, 'destroy', this.remove);
         },
-        clearOneNote: function() {
+        clearNote: function() {
             this.model.destroy();
         },
         render: function() {
@@ -31,6 +31,19 @@ $(document).ready(function() {
         }
     });
 
+    var NotesView = Backbone.View.extend({
+        el: '#list',
+        initialize: function() {
+            this.listenTo(Notes, 'add', this.addNote);
+        },
+        addNote: function(note) {
+            var view = new NoteView({model: note});
+            this.$el.append(view.render().el);
+        },
+        addNotes: function() {
+            Notes.each(this.addNote, this);
+        }
+    });
 
     var AppView = Backbone.View.extend({
         el: '#app',
@@ -39,47 +52,88 @@ $(document).ready(function() {
             'click #searchButton': 'search'
         },
         initialize: function() {
-            this.listenTo(Notes, 'add', this.showAllNotes);
-            Notes.fetch({reset: true});
-        },       
+            this.addname = this.$('#addname');
+            this.searchname = this.$('#searchname');
+            this.list = this.$('#list');            
+        },
         creatNote: function() {
-            var userInput = $('#addname').val().trim();
+            var userInput = this.addname.val().trim();
             if(userInput !== ''){
                 Notes.create({content: userInput});
             }
-            $('#addname').val('');     
-        },
-        addOneNote: function(note) {
-            var view = new NoteView({model: note});
-            $('#list').append(view.render().el);
-        },
+            this.addname.val('');   
+        }, 
         search: function() {
-            $('#list').empty();
-            var userInput = $('#searchname').val().trim();
+            this.list.empty();          
+            var userInput = this.searchname.val().trim();
             if(userInput === '') {
-                this.addAllNotes();
+                notesview.addNotes();
+            } else {
+                this.findNotesWithReg(userInput);            
             }
-            else {
-                var reg = new RegExp(userInput, 'i');
-                this.collection.each(function(note) {
-                    if(reg.test(note.attributes.content)){
-                        this.addOneNote(note);
-                    }
-                }, this);               
-            }
-            $('#searchname').val('');
+            this.searchname.val('');            
         },
-        addAllNotes: function() {
-            Notes.each(this.addOneNote, this);
-        },
-        showAllNotes: function() {
-            $('#list').empty();
-            this.addAllNotes();
+        findNotesWithReg: function(userInput) {
+            var reg = new RegExp(userInput, 'i');
+            notesview.collection.each(function(note) {
+                if(reg.test(note.get('content'))){
+                    notesview.addNote(note);
+                }
+            }); 
         }
     });
 
-    var appview = new AppView({collection: Notes});
+    var notesview = new NotesView({collection: Notes});
+    var appview = new AppView();
+    Notes.fetch();
 
+/*
+    var AppView = Backbone.View.extend({
+        el: '#app',
+        events: {
+            'click #addButton':  'creatNote',
+            'click #searchButton': 'search'
+        },
+        initialize: function() {
+            this.addname = this.$('#addname');
+            this.list = this.$('#list');
+            this.searchname = this.$('#searchname');
+            this.listenTo(Notes, 'add', this.addNote);
+            Notes.fetch();
+        },       
+        creatNote: function() {
+            var userInput = this.addname.val().trim();
+            if(userInput !== ''){
+                Notes.create({content: userInput});
+            }
+            this.addname.val('');     
+        },
+        addNote: function(note) {
+            var view = new NoteView({model: note});
+            console.log(note);
+            this.list.append(view.render().el);
+        },
+        search: function() {
+            this.list.empty();
+            var userInput = this.searchname.val().trim();
+            if(userInput === '') {
+                this.addNotes();
+            } else {
+                var reg = new RegExp(userInput, 'i');
+                this.collection.each(function(note) {
+                    if(reg.test(note.attributes.content)){
+                        this.addNote(note);
+                    }
+                }, this);               
+            }
+            this.searchname.val('');
+        },
+        addNotes: function() {
+            Notes.each(this.addNote, this);
+        }
+    });
+    var appview = new AppView({collection: Notes});
+    */
 });
 
 
