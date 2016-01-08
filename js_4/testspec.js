@@ -1,6 +1,5 @@
 var Notes = require('./Notespec.js');
 
-
 describe('Notes', function() {
     
     var notes;
