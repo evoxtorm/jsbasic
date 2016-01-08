@@ -3,7 +3,6 @@ var bodyParser = require('body-parser');
 var Notes = require('./Notes');
 var notes = new Notes();
 
-
 var app = express();
 
 app.use(express.static(__dirname));
@@ -60,7 +59,6 @@ app.delete('/notes/:id', function(req, res) {
 
 app.listen(8080);
 console.log('8080 running');
-
 
 function createNote(req) {
     var note = {
